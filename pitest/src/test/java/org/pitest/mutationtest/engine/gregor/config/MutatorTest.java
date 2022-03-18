@@ -156,6 +156,7 @@ public class MutatorTest {
     assertProvides("EXPERIMENTAL_NAKED_RECEIVER");
     assertProvides("EXPERIMENTAL_BIG_DECIMAL");
     assertProvides("EXPERIMENTAL_BIG_INTEGER");
+    assertProvides("EXPERIMENTAL_JAVA_TIME_CONDITIONAL_BOUNDARY");
   }
 
   @Test

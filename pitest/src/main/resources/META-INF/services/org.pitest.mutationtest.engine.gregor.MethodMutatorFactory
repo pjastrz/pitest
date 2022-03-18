@@ -17,7 +17,7 @@ org.pitest.mutationtest.engine.gregor.mutators.ReturnValsMutator
 org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.BigDecimalMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.BigIntegerMutator
-org.pitest.mutationtest.engine.gregor.mutators.experimental.Jsr310ConditionalBoundaryMutator
+org.pitest.mutationtest.engine.gregor.mutators.experimental.DateAndTimeConditionalBoundaryMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.MemberVariableMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.NakedReceiverMutator
 org.pitest.mutationtest.engine.gregor.mutators.experimental.RemoveIncrementsMutator

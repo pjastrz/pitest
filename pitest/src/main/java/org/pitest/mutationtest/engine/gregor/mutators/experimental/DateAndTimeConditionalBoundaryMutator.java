@@ -17,12 +17,11 @@ import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
 import org.pitest.mutationtest.engine.gregor.MutationContext;
 
-public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
+public enum DateAndTimeConditionalBoundaryMutator implements MethodMutatorFactory {
     EXPERIMENTAL_JAVA_TIME_CONDITIONAL_BOUNDARY;
 
     @Override
-    public MethodVisitor create(
-            MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor) {
+    public MethodVisitor create(MutationContext context, MethodInfo methodInfo, MethodVisitor methodVisitor) {
         return new LocalDateTimeConditionalBoundaryMutator(this, context, methodVisitor);
     }
 
@@ -64,18 +63,20 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
         private final MethodMutatorFactory factory;
         private final MutationContext context;
 
-        LocalDateTimeConditionalBoundaryMutator(
-                MethodMutatorFactory factory, MutationContext context,
-                MethodVisitor visitor) {
+        LocalDateTimeConditionalBoundaryMutator(MethodMutatorFactory factory,
+                                                MutationContext context,
+                                                MethodVisitor visitor) {
             super(Opcodes.ASM6, visitor);
             this.factory = factory;
             this.context = context;
         }
 
         @Override
-        public void visitMethodInsn(
-                int opcode, String owner, String name, String descriptor,
-                boolean isInterface) {
+        public void visitMethodInsn(int opcode,
+                                    String owner,
+                                    String name,
+                                    String descriptor,
+                                    boolean isInterface) {
             if (!MATCHED_TYPES.containsKey(owner) || opcode != Opcodes.INVOKEVIRTUAL) {
                 this.mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
                 return;
@@ -84,7 +85,8 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
             MatchedType matchedType = MATCHED_TYPES.get(owner);
             Replacement replacement = METHOD_REPLACEMENTS.get(name);
             if (replacement != null && matchedType.getComparisonMethodDescriptor().equals(descriptor)) {
-                MutationIdentifier identifier = context.registerMutation(factory, 
+                MutationIdentifier identifier = context.registerMutation(
+                        factory,
                         formatMutationDescription(matchedType, replacement));
                 if (context.shouldMutate(identifier)) {
                     this.mv.visitMethodInsn(
@@ -111,7 +113,9 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
         }
 
         @Override
-        public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
+        public void visitInvokeDynamicInsn(String name, 
+                                           String descriptor, 
+                                           Handle bootstrapMethodHandle,
                                            Object... bootstrapMethodArguments) {
             Object[] methodArgs = new Object[bootstrapMethodArguments.length];
             for (int i = 0; i < bootstrapMethodArguments.length; i++) {
@@ -139,8 +143,9 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
                     MatchedType matchedType = MATCHED_TYPES.get(owner);
                     Replacement replacement = METHOD_REPLACEMENTS.get(name);
                     if (matchedType.getComparisonMethodDescriptor().equals(descriptor)) {
-                        MutationIdentifier id = context.registerMutation(factory, 
-                                formatMutationDescription(matchedType, replacement));
+                        MutationIdentifier id = context.registerMutation(factory,
+                                                                         formatMutationDescription(matchedType,
+                                                                                                   replacement));
                         if (context.shouldMutate(id)) {
                             return new Handle(
                                     Opcodes.H_INVOKESTATIC,
@@ -160,13 +165,13 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
             String[] typeNameParts = matchedType.owner.split("/");
             String typeName = typeNameParts[typeNameParts.length - 1];
             String template = "Replaced %s#%s with !%s#%s.";
-            return String.format(template, 
-                    typeName,
-                    replacement.sourceName,
-                    typeName,
-                    replacement.destinationName);
+            return String.format(template,
+                                 typeName,
+                                 replacement.sourceName,
+                                 typeName,
+                                 replacement.destinationName);
         }
-        
+
         private static final class Replacement {
 
             private final String sourceName;
@@ -188,19 +193,19 @@ public enum Jsr310ConditionalBoundaryMutator implements MethodMutatorFactory {
                 this.owner = owner;
                 this.comparisonMethodParamType = comparisonMethodParamType;
             }
-            
+
             public String getComparisonMethodDescriptor() {
                 String format = "(L%s;)Z";
                 return String.format(format, comparisonMethodParamType);
             }
-            
+
             public String getDynamicReplacementMethodDescriptor() {
                 String format = "(L%s;L%s;)Z";
                 return String.format(format, owner, comparisonMethodParamType);
             }
         }
     }
-    
+
     public static class JavaTimeComparisonFunctions {
         public static boolean isBeforeOrEqual(LocalDateTime dateTime1, ChronoLocalDateTime<?> dateTime2) {
             return !dateTime1.isAfter(dateTime2);

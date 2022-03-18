@@ -11,13 +11,13 @@ import org.junit.Test;
 import org.pitest.mutationtest.engine.Mutant;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.gregor.MutatorTestBase;
-import org.pitest.mutationtest.engine.gregor.mutators.experimental.Jsr310ConditionalBoundaryMutator;
+import org.pitest.mutationtest.engine.gregor.mutators.experimental.DateAndTimeConditionalBoundaryMutator;
 
-public class LocalDateTimeJsr310ConditionalBoundaryMutatorTest extends MutatorTestBase {
+public class LocalDateTimeConditionalBoundaryMutatorTest extends MutatorTestBase {
 
     @Before
     public void setupEngineToMutateOnlyReturnVals() {
-        createTesteeWith(Jsr310ConditionalBoundaryMutator.EXPERIMENTAL_JAVA_TIME_CONDITIONAL_BOUNDARY);
+        createTesteeWith(DateAndTimeConditionalBoundaryMutator.EXPERIMENTAL_JAVA_TIME_CONDITIONAL_BOUNDARY);
     }
 
     @Test
